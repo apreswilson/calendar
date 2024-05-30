@@ -4,8 +4,6 @@ import App from './App.tsx';
 import './index.css';
 import ErrorPage from './components/error/error.tsx';
 import Calendar from './components/calendar/calendar.tsx';
-import SignUp from './components/signup/signup.tsx';
-// import RequireAuth from '@auth-kit/react-router/RequireAuth';
 import {
   createBrowserRouter,
   RouterProvider
@@ -20,13 +18,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/calendar/home",
-    // element: <RequireAuth fallbackPath='/calendar/'><Calendar /></RequireAuth>,
     element: <Calendar />,
-    errorElement: <ErrorPage />
-  },
-  {
-    path: "/calendar/signup",
-    element: <SignUp />,
     errorElement: <ErrorPage />
   },
   {
