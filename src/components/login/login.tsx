@@ -22,7 +22,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:5500/calendar/", { username, password });
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/calendar/`, { username, password });
       const token = response.data.token;
       localStorage.setItem('token', token);
       navigateOnSubmit("/calendar/home");
