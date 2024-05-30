@@ -1,13 +1,14 @@
+
 import './App.css'
-import Login from './components/login/login'
+import Home from './components/home/home'
 
 function App() {
 
   return (
     <>
-      <Login />
+      <Home />
     </>
   )
 }
 
-export default App;
+export default App
