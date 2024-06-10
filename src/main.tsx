@@ -18,13 +18,13 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />
   },
   {
-    path: "/calendar/home",
-    element: <Calendar />,
+    path: "/calendar/signup",
+    element: <SignUp />,
     errorElement: <ErrorPage />
   },
   {
-    path: "/calendar/signup",
-    element: <SignUp />,
+    path: "/calendar/home",
+    element: <Calendar />,
     errorElement: <ErrorPage />
   },
   {

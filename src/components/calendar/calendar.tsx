@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { useEffect, ChangeEvent, useState } from "react";
 import calendarTemplate from "./calendarTemplate";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSun, faMoon } from "@fortawesome/free-regular-svg-icons";
@@ -12,9 +12,21 @@ type CalendarTemplate = { [month: string]: MonthDays };
 const Calendar: React.FC = () => {
 
   const [currentCalendarState, setCurrentCalendarState] = useState<CalendarTemplate>(calendarTemplate);
+  const [calendarUpdated, setCalendarUpdated] = useState<boolean>(false);
   const [currentDisplayMonth, setCurrentDisplayMonth] = useState<string>("");
   const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])$/;
-  console.log(currentCalendarState);
+
+  useEffect(() => {
+    const storedCalendar = localStorage.getItem("storedCalendar");
+    const initialCalendarState: CalendarTemplate = storedCalendar ? JSON.parse(storedCalendar) : calendarTemplate;
+    setCurrentCalendarState(initialCalendarState);
+  }, [])
+
+
+  if (calendarUpdated) {
+    localStorage.setItem("storedCalendar", JSON.stringify(currentCalendarState));
+  }
+
   const updateMonthDisplay = (event: ChangeEvent<HTMLSelectElement>) => {
     setCurrentDisplayMonth(event.target.value);
   };
@@ -37,49 +49,40 @@ const Calendar: React.FC = () => {
     const day = parseInt(inputDay, 10);
     const monthName = new Date(0, month - 1).toLocaleString('default', { month: 'long' });
 
-    setCurrentCalendarState(prevCalendar => {
-      if (prevCalendar[monthName] && prevCalendar[monthName][day] !== undefined) {
-        return {
-          ...prevCalendar,
-          [monthName]: {
-            ...prevCalendar[monthName],
-            [day]: { name: eventName, date: eventDate, color: eventColor },
-          }
-        };
+    setCurrentCalendarState(prevCalendar => ({
+      ...prevCalendar,
+      [monthName]: {
+        ...prevCalendar[monthName],
+        [day]: { name: eventName, date: eventDate, color: eventColor },
       }
-      return prevCalendar;
-    });
+    }));
 
+    setCalendarUpdated(true);
     event.currentTarget.reset();
   };
 
+  // Generate JSX for days in the selected month
   const daysJSX = Object.entries(currentCalendarState)
     .filter(([month]) => month === currentDisplayMonth)
     .flatMap(([, days]) =>
       Object.entries(days).map(([day, value]) => (
         <div className="day" key={`${currentDisplayMonth}-${day}`}>
           <p className="day-number">{day}</p>
-          {typeof value === 'object' ? (
+          {typeof value === 'object' && value !== null && 'name' in value && 'color' in value ? (
             <div className="event" style={{ backgroundColor: value.color }}>
               <p>{value.name}</p>
             </div>
           ) : (
-            <div className="event">
-              <p>{value}</p>
-            </div>
+            <></>
           )}
         </div>
       ))
     );
 
-
   return (
     <div className="calendar-layout">
       <div className="top-row">
         <h1 className="page-title">Users Calendar</h1>
-        <div className="search">
-          <input type="text" placeholder="Search Events..." />
-        </div>
         <div className="options-tab">
           <div className="theme-select">
             <button className="faq">?</button>
@@ -94,7 +97,7 @@ const Calendar: React.FC = () => {
 
       <div className="main-content">
         <div className="calendar">
-          <div className="calendar-top">
+          <div className="sidebar">
             <h1 className="months-title">Month</h1>
             <select className="months" onChange={updateMonthDisplay}>
               <option value="">Select...</option>
@@ -122,14 +125,15 @@ const Calendar: React.FC = () => {
               </form>
             </div>
           </div>
+
           <div className="calendar-display">
             {daysJSX}
           </div>
         </div>
-        <div className="events-display"></div>
       </div>
     </div>
   );
 };
+
 
 export default Calendar;
