@@ -1,8 +1,19 @@
 import React, { useEffect, ChangeEvent, useState } from "react";
 import calendarTemplate from "./calendarTemplate";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSun, faMoon } from "@fortawesome/free-regular-svg-icons";
-import userLogo from "../../assets/user-profile.svg";
+import {
+  faSun,
+  faMoon,
+  faCircleUser,
+  faCircleQuestion,
+  faRightFromBracket,
+  faGear,
+  faBarsStaggered,
+  faX
+} from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../../context/authContext";
+import { useNavigate } from "react-router-dom";
+import './calendar.css';
 
 // Define the types
 type EventInfo = { name: string, date: string, color: string };
@@ -14,12 +25,23 @@ const Calendar: React.FC = () => {
   const [currentCalendarState, setCurrentCalendarState] = useState<CalendarTemplate>(calendarTemplate);
   const [calendarUpdated, setCalendarUpdated] = useState<boolean>(false);
   const [currentDisplayMonth, setCurrentDisplayMonth] = useState<string>("");
+  const [themeColor, setThemeColor] = useState("dark-theme");
+  const [toggleMenu, setToggleMenu] = useState("");
+  const currentUser = localStorage.getItem("User")?.split(",") || [];
+
   const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])$/;
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedCalendar = localStorage.getItem("storedCalendar");
     const initialCalendarState: CalendarTemplate = storedCalendar ? JSON.parse(storedCalendar) : calendarTemplate;
     setCurrentCalendarState(initialCalendarState);
+  }, [])
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    storedTheme === "dark-theme" ? setThemeColor("dark-theme") : setThemeColor("light-theme")
   }, [])
 
 
@@ -60,8 +82,20 @@ const Calendar: React.FC = () => {
     setCalendarUpdated(true);
     event.currentTarget.reset();
   };
+  const conductLogout = () => {
+    logout();
+    navigate("/calendar/");
+  }
 
-  // Generate JSX for days in the selected month
+  const changeTheme = () => {
+    themeColor === "dark-theme" ? localStorage.setItem("theme", "light-theme") : localStorage.setItem("theme", "dark-theme");
+    themeColor === "dark-theme" ? setThemeColor("light-theme") : setThemeColor("dark-theme");
+  }
+
+  const menuFunctionality = () => {
+    toggleMenu === "" ? setToggleMenu("menu-open") : setToggleMenu("");
+  }
+
   const daysJSX = Object.entries(currentCalendarState)
     .filter(([month]) => month === currentDisplayMonth)
     .flatMap(([, days]) =>
@@ -80,25 +114,47 @@ const Calendar: React.FC = () => {
     );
 
   return (
-    <div className="calendar-layout">
-      <div className="top-row">
-        <h1 className="page-title">Users Calendar</h1>
-        <div className="options-tab">
-          <div className="theme-select">
-            <button className="faq">?</button>
-            <FontAwesomeIcon icon={faSun} size="2xl" />
-            <FontAwesomeIcon icon={faMoon} size="2xl" />
-          </div>
+    <div className={`calendar-layout ${themeColor}`}>
+      <div className={`sidebar ${toggleMenu}`}>
+        <h1>{`Welcome, ${currentUser[0]}`}</h1>
+        <div className="account">
+          <FontAwesomeIcon icon={faCircleUser} />
+          <p className="hide">Account</p>
         </div>
-        <div className="user-profile">
-          <img src={userLogo} alt="User Profile" />
+        <div className="theme" onClick={changeTheme}>
+          {themeColor === "dark-theme" ?
+            <FontAwesomeIcon icon={faMoon} />
+            :
+            <FontAwesomeIcon icon={faSun} />
+          }
+          <p className="hide">Theme</p>
+        </div>
+        <div className="help">
+          <FontAwesomeIcon icon={faCircleQuestion} />
+          <p className="hide">Help</p>
+        </div>
+        <div className="settings">
+          <FontAwesomeIcon icon={faGear} />
+          <p className="hide">Settings</p>
+        </div>
+        <div className="logout" onClick={conductLogout}>
+          <FontAwesomeIcon icon={faRightFromBracket} />
+          <p className="hide">Logout</p>
         </div>
       </div>
 
-      <div className="main-content">
-        <div className="calendar">
-          <div className="sidebar">
-            <h1 className="months-title">Month</h1>
+      <div className="calendar">
+        <div className="new-event">
+          <div className="menu">
+            {toggleMenu === "menu-open" ?
+              <FontAwesomeIcon icon={faX} onClick={menuFunctionality} color="white" />
+              :
+              <FontAwesomeIcon icon={faBarsStaggered} onClick={menuFunctionality} />
+            }
+
+          </div>
+          <div className="month">
+            <h1 className="month-title">Month</h1>
             <select className="months" onChange={updateMonthDisplay}>
               <option value="">Select...</option>
               <option value="January">January</option>
@@ -114,21 +170,23 @@ const Calendar: React.FC = () => {
               <option value="November">November</option>
               <option value="December">December</option>
             </select>
-            <div className="add-event">
-              <h1 className="add-event-title">Add Event</h1>
-              <form onSubmit={addEventToDay}>
-                <input type="text" name="event" placeholder="Event Name" />
-                <input type="text" name="date" placeholder="Date: MM/DD" />
+          </div>
+          <div className="add-event">
+            <h1 className="add-event-title">Add Event</h1>
+            <form onSubmit={addEventToDay} className="new-event-form">
+              <input type="text" name="event" maxLength={30} placeholder="Event Name" />
+              <input type="text" name="date" placeholder="Date: MM/DD" />
+              <div className="color-input">
                 <label htmlFor="color">Color</label>
                 <input type="color" id="color" name="color" />
-                <button type="submit">Add</button>
-              </form>
-            </div>
+              </div>
+              <button type="submit" className="submit-new-event">Add</button>
+            </form>
           </div>
+        </div>
 
-          <div className="calendar-display">
-            {daysJSX}
-          </div>
+        <div className="calendar-display">
+          {daysJSX}
         </div>
       </div>
     </div>
