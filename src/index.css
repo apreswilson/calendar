@@ -1,0 +1,130 @@
+:root {
+  --dark-theme-background-color: rgb(30, 30, 30);
+  --light-theme-background-color: rgb(255, 255, 255);
+  --default-font-family: Arial, Helvetica, sans-serif;
+  --default-blue: rgb(0, 143, 226);
+}
+
+body {
+  margin: 0;
+  height: 100%;
+}
+
+.page-form {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-evenly;
+  margin: auto;
+  background-color: var(--dark-theme-background-color);
+  border-radius: 50px;
+  color: white;
+  font-family: var(--default-font-family);
+}
+
+.form-title {
+  font-weight: 100;
+  letter-spacing: 3px;
+  font-size: 40px;
+  margin: 0;
+}
+
+input[type="text" i] {
+  border: 0;
+}
+
+.form-button {
+  height: 74px;
+  width: 424px;
+  border-radius: 35px;
+  font-size: 25px;
+  color: white;
+  border: 0;
+}
+
+.form-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 50px;
+  width: 400px;
+  border: 2px solid rgb(90, 90, 90);
+  padding: 10px;
+  border-radius: 35px;
+  transition: 0.2s;
+}
+
+.form-input input {
+  width: 320px;
+  height: 50px;
+  border: 0;
+  font-size: 25px;
+  background-color: var(--dark-theme-background-color);
+  color: white;
+}
+
+.input-field:hover {
+  border: 2px solid rgb(38, 139, 197);
+}
+
+.input-field input:focus {
+  outline: none;
+}
+
+#status {
+  font-size: 25px;
+}
+
+.success {
+  color: rgb(38, 197, 110);
+}
+
+.fail {
+  color: rgb(230, 0, 0);
+}
+
+@media screen and (max-height: 800px) {
+  .page-form {
+    margin: 50px auto 0 auto;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .form-title {
+    font-size: 30px;
+    width: 50%;
+    text-align: center;
+  }
+
+  .page-form p,
+  .page-form ul {
+    font-size: 15px;
+    width: 75%;
+  }
+
+  .form-button {
+    width: 85%;
+    height: 54px;
+  }
+
+  .form-input {
+    width: 85%;
+    font-size: 10px;
+    padding: 0;
+  }
+
+  .form-input input {
+    width: 60%;
+    font-size: 15px;
+    height: 75%;
+  }
+
+  #status {
+    font-size: 20px;
+  }
+}

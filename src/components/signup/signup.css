@@ -1,0 +1,48 @@
+.signup-form {
+  height: 800px;
+  width: 500px;
+}
+
+.requirements {
+  font-size: 20px;
+  width: 350px;
+}
+
+.requirements p {
+  margin: 0;
+}
+
+#border-red {
+  border: 2px solid red;
+}
+
+#border-green {
+  border: 2px solid rgb(38, 197, 110);
+}
+
+#matched {
+  background-color: rgb(38, 197, 110);
+}
+
+#matched:hover {
+  cursor: pointer;
+}
+
+#not-match {
+  background-color: rgb(30, 30, 30);
+  border: 2px solid grey;
+}
+
+#not-match:hover {
+  cursor: not-allowed;
+}
+
+@media screen and (max-width: 500px) {
+  .signup-form {
+    width: 100%;
+  }
+
+  .requirements {
+    width: 85%;
+  }
+}
