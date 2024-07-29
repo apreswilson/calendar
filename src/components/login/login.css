@@ -1,8 +1,6 @@
 .login-layout,
 .signup-layout {
-  position: fixed;
   width: 100%;
-  height: 100%;
   background-color: rgb(20, 20, 20);
 }
 
